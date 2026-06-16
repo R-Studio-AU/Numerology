@@ -94,7 +94,9 @@ export function pinnacles(dob, lifePathNumber) {
   const c3 = reduceSingle(Math.abs(c1 - c2))
   const c4 = reduceSingle(Math.abs(m - y))
 
-  const firstEnd = 36 - lifePathNumber
+  // The pinnacle age boundaries use the single-digit life path, even when the
+  // life path itself is a master number (e.g. 11 -> 2, giving a boundary of 34).
+  const firstEnd = 36 - reduceSingle(lifePathNumber)
 
   return [
     { title: 'First', pinnacle: p1, challenge: c1, a: m, b: d, aLabel: 'month', bLabel: 'day', start: 0, end: firstEnd },

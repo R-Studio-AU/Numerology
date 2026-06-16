@@ -9,7 +9,13 @@
       "Bash(git init *)",
       "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git -c user.name=Angela -c user.email=angela@r-studio.com.au commit -q -m ' *)"
+      "Bash(git -c user.name=Angela -c user.email=angela@r-studio.com.au commit -q -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Read(//Users/Angela/.ssh/**)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -T git@github.com)",
+      "Bash(brew install *)",
+      "Bash(node --input-type=module -e ' *)"
     ]
   }
 }
