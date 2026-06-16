@@ -13,12 +13,14 @@ const CORE = [
 ]
 
 function Pyramid({ rows }) {
-  const reversed = [...rows].reverse()
+  // rows[0] is the base of { letter, value } objects; rows[1..] are numeric.
+  // Render the numeric rows top-down, then the letter base row separately.
+  const numericRows = rows.slice(1).reverse()
   return (
     <div className="overflow-x-auto pb-1">
       <div className="min-w-fit mx-auto">
-        {reversed.map((row, ri) => {
-          const isTop = ri === reversed.length - 1
+        {numericRows.map((row, ri) => {
+          const isTop = ri === numericRows.length - 1
           return (
             <div key={ri} className="flex justify-center gap-1.5 mb-1.5">
               {row.map((v, i) => (
@@ -163,9 +165,15 @@ export default function App() {
 
           <h2 className="text-base font-medium mb-3 text-center">Chaldean name pyramid</h2>
           <Pyramid rows={result.pyramid} />
-          <p className="text-[11px] text-gray-400 text-center mt-2.5">
-            Chaldean peak: {result.pyramid[result.pyramid.length - 1][0]} — {NUMBER_MEANING[result.pyramid[result.pyramid.length - 1][0]]}
-          </p>
+          {(() => {
+            const top = result.pyramid[result.pyramid.length - 1][0]
+            const peak = typeof top === 'object' ? top.value : top
+            return (
+              <p className="text-[11px] text-gray-400 text-center mt-2.5">
+                Chaldean peak: {peak} — {NUMBER_MEANING[peak]}
+              </p>
+            )
+          })()}
 
           <h2 className="text-base font-medium mb-3 mt-8">Pinnacle &amp; challenge cycles</h2>
           <div className="flex h-1.5 rounded-full overflow-hidden mb-1 bg-gray-100">
