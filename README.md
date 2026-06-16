@@ -30,7 +30,12 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL. Build a production bundle with `npm run build`.
+Then open the printed local URL. Build a production bundle with `npm run build`,
+then preview it with `npm run preview`.
+
+> **Note:** the built app must be served over HTTP (e.g. `npm run preview`, or any
+> static host). Opening `dist/index.html` directly from the filesystem (`file://`)
+> shows a blank page because browsers block ES-module scripts loaded over `file://`.
 
 ## Stack
 
