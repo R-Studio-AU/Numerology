@@ -126,6 +126,7 @@ export function pinnacles(dob, lifePathNumber) {
 }
 
 export const NUMBER_MEANING = {
+  0: 'The start and the end — wholeness, infinite potential, the complete circle.',
   1: 'Leader, pioneer, independent spirit.',
   2: 'Diplomat, intuitive, seeks harmony.',
   3: 'Creative, expressive, joyful communicator.',
@@ -141,6 +142,7 @@ export const NUMBER_MEANING = {
 }
 
 export const NUMBER_TAG = {
+  0: 'Start and end',
   1: 'The leader', 2: 'The peacemaker', 3: 'The creator', 4: 'The builder',
   5: 'The freedom seeker', 6: 'The nurturer', 7: 'The seeker', 8: 'The powerhouse',
   9: 'The humanitarian', 11: 'Master 11', 22: 'Master 22', 33: 'Master 33',
