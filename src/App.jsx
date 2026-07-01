@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
-  lifePath, expression, soulDesire, selfImage, legacy,
+  lifePath, expression, soulDesire, personality, selfImage, legacy,
   namePyramid, pinnacles, SYSTEMS,
   NUMBER_MEANING, NUMBER_TAG, PINNACLE_MEANING, CHALLENGE_MEANING,
 } from './numerology.js'
@@ -9,7 +9,8 @@ const CORE = [
   { key: 'lifePath', label: 'Life path', sub: 'from date of birth', color: '#534AB7', tagBg: '#EEEDFE', tagText: '#3C3489' },
   { key: 'expression', label: 'Expression', sub: 'all letters', color: '#0F6E56', tagBg: '#E1F5EE', tagText: '#085041' },
   { key: 'soulDesire', label: 'Soul desire', sub: 'vowels', color: '#993C1D', tagBg: '#FAECE7', tagText: '#712B13' },
-  { key: 'selfImage', label: 'Self-image', sub: 'consonants', color: '#854F0B', tagBg: '#FAEEDA', tagText: '#633806' },
+  { key: 'personality', label: 'Personality', sub: 'consonants', color: '#854F0B', tagBg: '#FAEEDA', tagText: '#633806' },
+  { key: 'selfImage', label: 'Self-image', sub: 'day + month', color: '#0F6E56', tagBg: '#E1F5EE', tagText: '#085041' },
   { key: 'legacy', label: 'Legacy', sub: 'last digit of birth year', color: '#185FA5', tagBg: '#E6F1FB', tagText: '#0C447C' },
 ]
 
@@ -108,7 +109,8 @@ export default function App() {
         lifePath: lp,
         expression: expression(n, system),
         soulDesire: soulDesire(n, system),
-        selfImage: selfImage(n, system),
+        personality: personality(n, system),
+        selfImage: selfImage(d),
         legacy: legacy(d),
       },
       pyramid: namePyramid(n, system),

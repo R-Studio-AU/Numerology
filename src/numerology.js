@@ -65,9 +65,15 @@ export function soulDesire(name, system = 'pythagorean') {
   return reduceMaster(nameSum(name, system, (c) => VOWELS.has(c)))
 }
 
-// Self-image (a.k.a. personality) — the consonants.
-export function selfImage(name, system = 'pythagorean') {
+// Personality — the consonants.
+export function personality(name, system = 'pythagorean') {
   return reduceMaster(nameSum(name, system, (c) => !VOWELS.has(c)))
+}
+
+// Self-image — the birth day plus the birth month, reduced.
+export function selfImage(dob) {
+  const [, month, day] = dob.split('-').map(Number)
+  return reduceMaster(day + month)
 }
 
 // Legacy — the last digit of the birth year.
