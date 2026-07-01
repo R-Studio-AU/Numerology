@@ -70,10 +70,12 @@ export function personality(name, system = 'pythagorean') {
   return reduceMaster(nameSum(name, system, (c) => !VOWELS.has(c)))
 }
 
-// Self-image — the birth day plus the birth month, reduced.
+// Self-image — the sum of the individual digits of the birth day and month,
+// reduced (keeping master numbers).
 export function selfImage(dob) {
-  const [, month, day] = dob.split('-').map(Number)
-  return reduceMaster(day + month)
+  const [, month, day] = dob.split('-')
+  const sum = (month + day).split('').reduce((a, d) => a + Number(d), 0)
+  return reduceMaster(sum)
 }
 
 // Legacy — the last digit of the birth year.
