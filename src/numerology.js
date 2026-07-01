@@ -34,38 +34,57 @@ export function reduceSingle(n) {
 
 const letters = (name) => name.toUpperCase().split('').filter((c) => c >= 'A' && c <= 'Z')
 
+// The two supported letter-value systems. The active one drives every
+// name-derived number and the reduction pyramid.
+export const SYSTEMS = {
+  pythagorean: { label: 'Pythagorean', values: PYTHAGOREAN },
+  chaldean: { label: 'Chaldean', values: CHALDEAN },
+}
+
+const valuesFor = (system) => (SYSTEMS[system] || SYSTEMS.pythagorean).values
+
+function nameSum(name, system, keep) {
+  const map = valuesFor(system)
+  return letters(name)
+    .filter(keep)
+    .reduce((a, c) => a + (map[c] || 0), 0)
+}
+
 export function lifePath(dob) {
   const digits = dob.replace(/-/g, '').split('').map(Number)
   return reduceMaster(digits.reduce((a, b) => a + b, 0))
 }
 
-export function expression(name) {
-  const sum = letters(name).reduce((a, c) => a + (PYTHAGOREAN[c] || 0), 0)
-  return reduceMaster(sum)
+// Expression / destiny — all letters of the name.
+export function expression(name, system = 'pythagorean') {
+  return reduceMaster(nameSum(name, system, () => true))
 }
 
-export function soulUrge(name) {
-  const sum = letters(name)
-    .filter((c) => VOWELS.has(c))
-    .reduce((a, c) => a + (PYTHAGOREAN[c] || 0), 0)
-  return reduceMaster(sum)
+// Soul desire (a.k.a. soul urge / heart's desire) — the vowels.
+export function soulDesire(name, system = 'pythagorean') {
+  return reduceMaster(nameSum(name, system, (c) => VOWELS.has(c)))
 }
 
-export function personality(name) {
-  const sum = letters(name)
-    .filter((c) => !VOWELS.has(c))
-    .reduce((a, c) => a + (PYTHAGOREAN[c] || 0), 0)
-  return reduceMaster(sum)
+// Self-image (a.k.a. personality) — the consonants.
+export function selfImage(name, system = 'pythagorean') {
+  return reduceMaster(nameSum(name, system, (c) => !VOWELS.has(c)))
 }
 
-// Build the Chaldean reduction pyramid. Returns rows from base (letters)
-// upward; each successive row sums adjacent values and reduces to a single
-// digit. The base row holds { letter, value } objects; higher rows hold
-// plain numbers.
-export function chaldeanPyramid(name) {
+// Legacy — the last digit of the birth year.
+export function legacy(dob) {
+  const year = dob.split('-')[0]
+  return Number(year[year.length - 1])
+}
+
+// Build the name-reduction pyramid for the chosen system. Returns rows from
+// base (letters) upward; each successive row sums adjacent values and reduces
+// to a single digit. The base row holds { letter, value } objects; higher rows
+// hold plain numbers.
+export function namePyramid(name, system = 'pythagorean') {
+  const map = valuesFor(system)
   const ls = letters(name)
   if (!ls.length) return []
-  const rows = [ls.map((c) => ({ letter: c, value: CHALDEAN[c] || 0 }))]
+  const rows = [ls.map((c) => ({ letter: c, value: map[c] || 0 }))]
   let current = rows[0].map((x) => x.value)
   while (current.length > 1) {
     current = current.slice(0, -1).map((_, i) => reduceSingle(current[i] + current[i + 1]))

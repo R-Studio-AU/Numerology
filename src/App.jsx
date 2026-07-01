@@ -1,15 +1,16 @@
 import { useMemo, useState } from 'react'
 import {
-  lifePath, expression, soulUrge, personality,
-  chaldeanPyramid, pinnacles,
+  lifePath, expression, soulDesire, selfImage, legacy,
+  namePyramid, pinnacles, SYSTEMS,
   NUMBER_MEANING, NUMBER_TAG, PINNACLE_MEANING, CHALLENGE_MEANING,
 } from './numerology.js'
 
 const CORE = [
-  { key: 'lifePath', label: 'Life path', color: '#534AB7', tagBg: '#EEEDFE', tagText: '#3C3489' },
-  { key: 'expression', label: 'Expression', color: '#0F6E56', tagBg: '#E1F5EE', tagText: '#085041' },
-  { key: 'soulUrge', label: 'Soul urge', color: '#993C1D', tagBg: '#FAECE7', tagText: '#712B13' },
-  { key: 'personality', label: 'Personality', color: '#854F0B', tagBg: '#FAEEDA', tagText: '#633806' },
+  { key: 'lifePath', label: 'Life path', sub: 'from date of birth', color: '#534AB7', tagBg: '#EEEDFE', tagText: '#3C3489' },
+  { key: 'expression', label: 'Expression', sub: 'all letters', color: '#0F6E56', tagBg: '#E1F5EE', tagText: '#085041' },
+  { key: 'soulDesire', label: 'Soul desire', sub: 'vowels', color: '#993C1D', tagBg: '#FAECE7', tagText: '#712B13' },
+  { key: 'selfImage', label: 'Self-image', sub: 'consonants', color: '#854F0B', tagBg: '#FAEEDA', tagText: '#633806' },
+  { key: 'legacy', label: 'Legacy', sub: 'last digit of birth year', color: '#185FA5', tagBg: '#E6F1FB', tagText: '#0C447C' },
 ]
 
 function Pyramid({ rows }) {
@@ -86,24 +87,34 @@ function Diamond({ p }) {
 export default function App() {
   const [name, setName] = useState('')
   const [dob, setDob] = useState('')
-  const [result, setResult] = useState(null)
+  const [system, setSystem] = useState('pythagorean')
+  const [submitted, setSubmitted] = useState(null)
 
   const calculate = () => {
     if (!name.trim() || !dob) return
-    const lp = lifePath(dob)
-    setResult({
-      name: name.trim(),
-      dob,
+    setSubmitted({ name: name.trim(), dob })
+  }
+
+  // Recompute whenever the submitted inputs or the active system change, so the
+  // Chaldean/Pythagorean toggle updates the name numbers and pyramid live.
+  const result = useMemo(() => {
+    if (!submitted) return null
+    const { name: n, dob: d } = submitted
+    const lp = lifePath(d)
+    return {
+      name: n,
+      dob: d,
       core: {
         lifePath: lp,
-        expression: expression(name),
-        soulUrge: soulUrge(name),
-        personality: personality(name),
+        expression: expression(n, system),
+        soulDesire: soulDesire(n, system),
+        selfImage: selfImage(n, system),
+        legacy: legacy(d),
       },
-      pyramid: chaldeanPyramid(name),
-      pinnacles: pinnacles(dob, lp),
-    })
-  }
+      pyramid: namePyramid(n, system),
+      pinnacles: pinnacles(d, lp),
+    }
+  }, [submitted, system])
 
   const nowAge = useMemo(() => {
     if (!result) return null
@@ -133,6 +144,22 @@ export default function App() {
           onChange={(e) => setDob(e.target.value)}
           className="w-full mb-4 px-3 py-2 rounded-md border border-black/10 outline-none focus:border-royal"
         />
+        <label className="block text-[13px] text-gray-500 mb-1.5">Name calculation system</label>
+        <div className="flex gap-1 mb-4 p-1 bg-gray-100 rounded-md">
+          {Object.entries(SYSTEMS).map(([key, s]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSystem(key)}
+              className={
+                'flex-1 py-1.5 rounded text-sm font-medium transition-colors ' +
+                (system === key ? 'bg-white text-ink shadow-sm' : 'text-gray-500 hover:text-ink')
+              }
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
         <button
           onClick={calculate}
           className="w-full py-2.5 rounded-md bg-royal text-white font-medium hover:bg-ink transition-colors"
@@ -143,7 +170,10 @@ export default function App() {
 
       {result && (
         <div>
-          <h2 className="text-base font-medium mb-3">Core numbers</h2>
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-base font-medium">Core numbers</h2>
+            <span className="text-[11px] text-gray-400">Name numbers use {SYSTEMS[system].label}</span>
+          </div>
           <div className="grid grid-cols-2 gap-3 mb-8">
             {CORE.map((c) => {
               const n = result.core[c.key]
@@ -151,26 +181,31 @@ export default function App() {
                 <div key={c.key} className="bg-white rounded-md border border-black/5 p-4 text-center">
                   <div className="text-4xl font-medium leading-none mb-1" style={{ color: c.color }}>{n}</div>
                   <div className="text-xs text-gray-500">{c.label}</div>
-                  <div
-                    className="inline-block text-[11px] px-2 py-0.5 rounded-md mt-1"
-                    style={{ background: c.tagBg, color: c.tagText }}
-                  >
-                    {NUMBER_TAG[n]}
-                  </div>
-                  <div className="text-[11px] text-gray-400 mt-1.5 leading-snug">{NUMBER_MEANING[n]}</div>
+                  <div className="text-[10px] text-gray-400 mt-0.5">{c.sub}</div>
+                  {NUMBER_TAG[n] && (
+                    <div
+                      className="inline-block text-[11px] px-2 py-0.5 rounded-md mt-1"
+                      style={{ background: c.tagBg, color: c.tagText }}
+                    >
+                      {NUMBER_TAG[n]}
+                    </div>
+                  )}
+                  {NUMBER_MEANING[n] && (
+                    <div className="text-[11px] text-gray-400 mt-1.5 leading-snug">{NUMBER_MEANING[n]}</div>
+                  )}
                 </div>
               )
             })}
           </div>
 
-          <h2 className="text-base font-medium mb-3 text-center">Chaldean name pyramid</h2>
+          <h2 className="text-base font-medium mb-3 text-center">{SYSTEMS[system].label} name pyramid</h2>
           <Pyramid rows={result.pyramid} />
           {(() => {
             const top = result.pyramid[result.pyramid.length - 1][0]
             const peak = typeof top === 'object' ? top.value : top
             return (
               <p className="text-[11px] text-gray-400 text-center mt-2.5">
-                Chaldean peak: {peak} — {NUMBER_MEANING[peak]}
+                Pyramid peak: {peak} — {NUMBER_MEANING[peak]}
               </p>
             )
           })()}

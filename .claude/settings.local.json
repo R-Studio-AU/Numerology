@@ -15,7 +15,9 @@
       "Read(//Users/Angela/.ssh/**)",
       "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 -T git@github.com)",
       "Bash(brew install *)",
-      "Bash(node --input-type=module -e ' *)"
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
